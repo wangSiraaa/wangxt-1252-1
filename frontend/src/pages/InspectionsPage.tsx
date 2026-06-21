@@ -42,7 +42,7 @@ export default function InspectionsPage() {
   const [inspections, setInspections] = useState<EquipmentInspection[]>([])
   const [shows, setShows] = useState<Show[]>([])
   const [loading, setLoading] = useState(true)
-  const [showFilter, setShowFilter] = useState('')
+  const [showFilter, setShowFilter] = useState<string | number>('')
   const [typeFilter, setTypeFilter] = useState('')
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [editing, setEditing] = useState<EquipmentInspection | null>(null)
@@ -56,7 +56,7 @@ export default function InspectionsPage() {
     setLoading(true)
     try {
       const [inspectionData, showData] = await Promise.all([
-        getInspections(showFilter || undefined, typeFilter || undefined),
+        getInspections(typeof showFilter === 'number' ? showFilter : undefined, typeFilter || undefined),
         getShows(),
       ])
       setInspections(inspectionData)
@@ -109,7 +109,7 @@ export default function InspectionsPage() {
     }
   }
 
-  const getStatusColor = (status: InspectionStatus) => {
+  const getStatusColor = (status: InspectionStatus): 'success' | 'error' | 'warning' => {
     switch (status) {
       case InspectionStatus.PASS:
         return 'success'
@@ -120,7 +120,7 @@ export default function InspectionsPage() {
     }
   }
 
-  const getTypeColor = (type: InspectionType) => {
+  const getTypeColor = (type: InspectionType): 'error' | 'warning' | 'primary' => {
     switch (type) {
       case InspectionType.FIRE:
         return 'error'
@@ -198,7 +198,7 @@ export default function InspectionsPage() {
                 </TableRow>
               ) : inspections.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} align="center" color="text.secondary">
+                  <TableCell colSpan={7} align="center" sx={{ color: 'text.secondary' }}>
                     暂无检查记录（场次发布后自动创建检查项）
                   </TableCell>
                 </TableRow>
@@ -209,7 +209,7 @@ export default function InspectionsPage() {
                     <TableCell>
                       <Chip
                         label={item.inspection_type_display || InspectionTypeLabels[item.inspection_type]}
-                        color={getTypeColor(item.inspection_type) as any}
+                        color={getTypeColor(item.inspection_type)}
                         size="small"
                         variant={item.inspection_type === InspectionType.FIRE ? 'filled' : 'outlined'}
                       />
@@ -217,7 +217,7 @@ export default function InspectionsPage() {
                     <TableCell>
                       <Chip
                         label={item.status_display || InspectionStatusLabels[item.status]}
-                        color={getStatusColor(item.status) as any}
+                        color={getStatusColor(item.status)}
                         size="small"
                       />
                     </TableCell>

@@ -230,8 +230,9 @@ class RefundService:
                 handled_by=user
             )
 
-            order.status = OrderStatus.REFUNDING
             order.is_postponed_refund = is_postponed_refund
+            if not original_order_kept:
+                order.status = OrderStatus.REFUNDING
             order.save()
 
             return refund

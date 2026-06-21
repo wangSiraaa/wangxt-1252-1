@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import 'dayjs/locale/zh-cn'
 import App from './App'
+import { ToastProvider } from './components/ToastContext'
 import './index.css'
 
 const theme = createTheme({

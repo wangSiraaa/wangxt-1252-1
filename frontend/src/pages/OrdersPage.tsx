@@ -57,7 +57,7 @@ export default function OrdersPage() {
   const [shows, setShows] = useState<Show[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [showFilter, setShowFilter] = useState('')
+  const [showFilter, setShowFilter] = useState<string | number>('')
   const [statusFilter, setStatusFilter] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
@@ -76,7 +76,7 @@ export default function OrdersPage() {
     try {
       const params: any = {}
       if (search) params.search = search
-      if (showFilter) params.show_id = showFilter
+      if (typeof showFilter === 'number') params.show_id = showFilter
       if (statusFilter) params.status = statusFilter
       const [orderData, showData] = await Promise.all([
         getOrders(params),
@@ -151,7 +151,7 @@ export default function OrdersPage() {
     }
   }
 
-  const getStatusColor = (status: OrderStatus) => {
+  const getStatusColor = (status: OrderStatus): 'success' | 'warning' | 'info' | 'default' | 'error' => {
     switch (status) {
       case OrderStatus.PAID:
         return 'success'
@@ -263,7 +263,7 @@ export default function OrdersPage() {
                 </TableRow>
               ) : orders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center" color="text.secondary">
+                  <TableCell colSpan={10} align="center" sx={{ color: 'text.secondary' }}>
                     暂无订单
                   </TableCell>
                 </TableRow>
@@ -282,7 +282,7 @@ export default function OrdersPage() {
                         <Chip
                           label={order.status_display || OrderStatusLabels[order.status]}
                           size="small"
-                          color={getStatusColor(order.status) as any}
+                          color={getStatusColor(order.status)}
                         />
                         {order.is_postponed_refund && (
                           <Chip label="延期退票" size="small" color="secondary" variant="outlined" />
@@ -454,7 +454,7 @@ export default function OrdersPage() {
                   <Chip
                     label={selectedOrder.status_display || OrderStatusLabels[selectedOrder.status]}
                     size="small"
-                    color={getStatusColor(selectedOrder.status) as any}
+                    color={getStatusColor(selectedOrder.status)}
                   />
                 </Grid>
                 <Grid item xs={6}>

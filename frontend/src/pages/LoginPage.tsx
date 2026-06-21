@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, FormEvent } from 'react'
 import {
   Container,
   Paper,
@@ -21,7 +21,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [loading, setLoading] = useState(false)
   const { showToast } = useToast()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!username || !password) {
       showToast('请输入用户名和密码', 'warning')

@@ -125,7 +125,7 @@ export default function ShowDetailPage() {
     }
   }
 
-  const getSeatColor = (status: SeatStatus) => {
+  const getSeatColor = (status: SeatStatus): 'success' | 'primary' | 'warning' | 'default' => {
     switch (status) {
       case SeatStatus.AVAILABLE:
         return 'success'
@@ -138,7 +138,7 @@ export default function ShowDetailPage() {
     }
   }
 
-  const getStatusColor = (status: ShowStatus) => {
+  const getStatusColor = (status: ShowStatus): 'success' | 'info' | 'warning' | 'error' | 'default' => {
     switch (status) {
       case ShowStatus.ON_SALE:
         return 'success'
@@ -183,7 +183,7 @@ export default function ShowDetailPage() {
         </Typography>
         <Chip
           label={show.status_display || ShowStatusLabels[show.status]}
-          color={getStatusColor(show.status) as any}
+          color={getStatusColor(show.status)}
         />
         <Button startIcon={<RefreshIcon />} onClick={loadData} size="small">
           刷新
@@ -284,7 +284,7 @@ export default function ShowDetailPage() {
                             <Chip
                               label={seat.seat_number}
                               size="small"
-                              color={getSeatColor(seat.status) as any}
+                              color={getSeatColor(seat.status)}
                               variant={seat.status === SeatStatus.AVAILABLE ? 'outlined' : 'filled'}
                               sx={{ mb: 0.5 }}
                             />

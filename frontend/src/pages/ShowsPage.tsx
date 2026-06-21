@@ -168,7 +168,7 @@ export default function ShowsPage() {
     }
   }
 
-  const getStatusColor = (status: ShowStatus) => {
+  const getStatusColor = (status: ShowStatus): 'success' | 'default' | 'warning' | 'info' | 'error' | 'secondary' => {
     switch (status) {
       case ShowStatus.ON_SALE:
         return 'success'
@@ -256,7 +256,7 @@ export default function ShowsPage() {
                 </TableRow>
               ) : shows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} align="center" color="text.secondary">
+                  <TableCell colSpan={9} align="center" sx={{ color: 'text.secondary' }}>
                     暂无数据
                   </TableCell>
                 </TableRow>
@@ -282,7 +282,7 @@ export default function ShowsPage() {
                       <Chip
                         label={show.status_display || ShowStatusLabels[show.status]}
                         size="small"
-                        color={getStatusColor(show.status) as any}
+                        color={getStatusColor(show.status)}
                       />
                     </TableCell>
                     <TableCell>

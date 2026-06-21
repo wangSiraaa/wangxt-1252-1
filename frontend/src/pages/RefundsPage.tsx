@@ -49,7 +49,7 @@ export default function RefundsPage() {
   const [refunds, setRefunds] = useState<Refund[]>([])
   const [shows, setShows] = useState<Show[]>([])
   const [loading, setLoading] = useState(true)
-  const [showFilter, setShowFilter] = useState('')
+  const [showFilter, setShowFilter] = useState<string | number>('')
   const [statusFilter, setStatusFilter] = useState('')
   const [search, setSearch] = useState('')
   const [detailOpen, setDetailOpen] = useState(false)
@@ -59,7 +59,7 @@ export default function RefundsPage() {
     setLoading(true)
     try {
       const params: any = {}
-      if (showFilter) params.show_id = showFilter
+      if (typeof showFilter === 'number') params.show_id = showFilter
       if (statusFilter) params.status = statusFilter
       const [refundData, showData] = await Promise.all([
         getRefunds(params),
@@ -106,7 +106,7 @@ export default function RefundsPage() {
     }
   }
 
-  const getStatusColor = (status: RefundStatus) => {
+  const getStatusColor = (status: RefundStatus): 'success' | 'warning' | 'error' | 'default' => {
     switch (status) {
       case RefundStatus.COMPLETED:
       case RefundStatus.APPROVED:
@@ -199,7 +199,7 @@ export default function RefundsPage() {
                 </TableRow>
               ) : refunds.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={11} align="center" color="text.secondary">
+                  <TableCell colSpan={11} align="center" sx={{ color: 'text.secondary' }}>
                     暂无退票记录
                   </TableCell>
                 </TableRow>
@@ -212,7 +212,7 @@ export default function RefundsPage() {
                       <TableCell>{r.order_no}</TableCell>
                       <TableCell>{r.show_title}</TableCell>
                       <TableCell align="right">¥{r.refund_amount}</TableCell>
-                      <TableCell align="right" color="warning.main">
+                      <TableCell align="right" sx={{ color: 'warning.main' }}>
                         -¥{r.service_fee_deducted}
                       </TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600, color: 'success.main' }}>
@@ -237,7 +237,7 @@ export default function RefundsPage() {
                         <Chip
                           label={r.status_display || RefundStatusLabels[r.status]}
                           size="small"
-                          color={getStatusColor(r.status) as any}
+                          color={getStatusColor(r.status)}
                         />
                       </TableCell>
                       <TableCell>{dayjs(r.created_at).format('MM-DD HH:mm')}</TableCell>
@@ -298,7 +298,7 @@ export default function RefundsPage() {
                 {selected.original_order_kept && <Chip label="保留原订单" color="primary" variant="outlined" />}
                 <Chip
                   label={selected.status_display || RefundStatusLabels[selected.status]}
-                  color={getStatusColor(selected.status) as any}
+                  color={getStatusColor(selected.status)}
                 />
               </Stack>
               <Box>
