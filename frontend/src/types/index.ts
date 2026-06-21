@@ -107,6 +107,7 @@ export interface Show {
   available_seats_count?: number
   is_fire_inspection_passed?: boolean
   has_all_inspections_passed?: boolean
+  inspection_summary?: InspectionSummary
 }
 
 export interface Seat {
@@ -191,6 +192,20 @@ export interface Refund {
   created_at: string
   updated_at: string
   completed_at?: string
+}
+
+export interface InspectionSummaryItem {
+  status: InspectionStatus | null
+  remark: string
+  issues_found: string
+  inspection_time?: string
+  inspector_name: string
+}
+
+export interface InspectionSummary {
+  rigging: InspectionSummaryItem
+  lighting: InspectionSummaryItem
+  fire: InspectionSummaryItem
 }
 
 export interface SeatZoneConfig {

@@ -43,7 +43,15 @@ import {
   postponeShow,
 } from '../api/services'
 import { useToast } from '../components/ToastContext'
-import { Show, ShowStatus, ShowStatusLabels } from '../types'
+import {
+  Show,
+  ShowStatus,
+  ShowStatusLabels,
+  InspectionType,
+  InspectionTypeLabels,
+  InspectionStatus,
+  InspectionStatusLabels,
+} from '../types'
 
 export default function ShowsPage() {
   const navigate = useNavigate()
@@ -242,7 +250,7 @@ export default function ShowsPage() {
                 <TableCell align="right">容量</TableCell>
                 <TableCell align="right">已售</TableCell>
                 <TableCell align="right">票价</TableCell>
-                <TableCell>消防检查</TableCell>
+                <TableCell>设备检查</TableCell>
                 <TableCell>状态</TableCell>
                 <TableCell>操作</TableCell>
               </TableRow>
@@ -272,11 +280,47 @@ export default function ShowsPage() {
                     </TableCell>
                     <TableCell align="right">¥{show.ticket_price}</TableCell>
                     <TableCell>
-                      {show.is_fire_inspection_passed ? (
-                        <Chip label="通过" size="small" color="success" variant="outlined" />
-                      ) : (
-                        <Chip label="未通过" size="small" color="error" />
-                      )}
+                      <Stack direction="row" spacing={0.5}>
+                        {[InspectionType.RIGGING, InspectionType.LIGHTING, InspectionType.FIRE].map((type) => {
+                          const summary = show.inspection_summary?.[type.toLowerCase() as keyof typeof show.inspection_summary]
+                          const status = summary?.status
+                          const label = InspectionTypeLabels[type]
+                          const statusLabel = status ? InspectionStatusLabels[status as InspectionStatus] : '待检查'
+                          const color = status === InspectionStatus.PASS
+                            ? 'success'
+                            : status === InspectionStatus.FAIL
+                            ? 'error'
+                            : 'default'
+                          return (
+                            <Tooltip
+                              key={type}
+                              title={
+                                <Box>
+                                  <Typography variant="subtitle2">{label}检查</Typography>
+                                  <Typography variant="body2">状态：{statusLabel}</Typography>
+                                  {summary?.remark && (
+                                    <Typography variant="body2">备注：{summary.remark}</Typography>
+                                  )}
+                                  {summary?.issues_found && (
+                                    <Typography variant="body2">问题：{summary.issues_found}</Typography>
+                                  )}
+                                  {summary?.inspector_name && (
+                                    <Typography variant="body2">检查人：{summary.inspector_name}</Typography>
+                                  )}
+                                </Box>
+                              }
+                              arrow
+                            >
+                              <Chip
+                                label={label}
+                                size="small"
+                                color={color as any}
+                                variant={status === InspectionStatus.PASS ? 'outlined' : 'filled'}
+                              />
+                            </Tooltip>
+                          )
+                        })}
+                      </Stack>
                     </TableCell>
                     <TableCell>
                       <Chip

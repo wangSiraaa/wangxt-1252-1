@@ -94,6 +94,23 @@ class Show(models.Model):
         )
         return required_types.issubset(passed)
 
+    @property
+    def inspection_summary(self):
+        summary = {
+            'rigging': {'status': None, 'remark': ''},
+            'lighting': {'status': None, 'remark': ''},
+            'fire': {'status': None, 'remark': ''},
+        }
+        for inspection in self.inspections.all():
+            itype = inspection.inspection_type.lower()
+            if itype in summary:
+                summary[itype]['status'] = inspection.status
+                summary[itype]['remark'] = inspection.remark or ''
+                summary[itype]['issues_found'] = inspection.issues_found or ''
+                summary[itype]['inspection_time'] = inspection.inspection_time
+                summary[itype]['inspector_name'] = inspection.inspector.username if inspection.inspector else ''
+        return summary
+
     def clean(self):
         if self.total_capacity <= 0:
             raise ValidationError('座位容量必须大于0')

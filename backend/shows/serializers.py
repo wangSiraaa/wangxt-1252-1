@@ -6,12 +6,21 @@ from .models import (
 )
 
 
+class InspectionSummaryItemSerializer(serializers.Serializer):
+    status = serializers.CharField(allow_null=True)
+    remark = serializers.CharField()
+    issues_found = serializers.CharField()
+    inspection_time = serializers.DateTimeField(allow_null=True)
+    inspector_name = serializers.CharField()
+
+
 class ShowListSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     sold_seats_count = serializers.IntegerField(read_only=True)
     available_seats_count = serializers.IntegerField(read_only=True)
     is_fire_inspection_passed = serializers.BooleanField(read_only=True)
     has_all_inspections_passed = serializers.BooleanField(read_only=True)
+    inspection_summary = serializers.SerializerMethodField()
     created_by_name = serializers.CharField(source='created_by.username', read_only=True)
 
     class Meta:
@@ -19,9 +28,12 @@ class ShowListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'venue', 'total_capacity', 'show_time', 'status',
             'status_display', 'ticket_price', 'sold_seats_count', 'available_seats_count',
-            'is_fire_inspection_passed', 'has_all_inspections_passed',
+            'is_fire_inspection_passed', 'has_all_inspections_passed', 'inspection_summary',
             'created_by', 'created_by_name', 'created_at'
         ]
+
+    def get_inspection_summary(self, obj):
+        return obj.inspection_summary
 
 
 class ShowDetailSerializer(serializers.ModelSerializer):
@@ -30,12 +42,16 @@ class ShowDetailSerializer(serializers.ModelSerializer):
     available_seats_count = serializers.IntegerField(read_only=True)
     is_fire_inspection_passed = serializers.BooleanField(read_only=True)
     has_all_inspections_passed = serializers.BooleanField(read_only=True)
+    inspection_summary = serializers.SerializerMethodField()
     created_by_name = serializers.CharField(source='created_by.username', read_only=True)
 
     class Meta:
         model = Show
         fields = '__all__'
         read_only_fields = ['created_by', 'status', 'created_at', 'updated_at']
+
+    def get_inspection_summary(self, obj):
+        return obj.inspection_summary
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user

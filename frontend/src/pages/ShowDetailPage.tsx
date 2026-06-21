@@ -242,6 +242,50 @@ export default function ShowDetailPage() {
                     <Chip label={`退票 ${refundedCount}`} color="warning" size="small" variant="outlined" />
                   </Stack>
                 </Box>
+                <Divider />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">设备检查</Typography>
+                  <Stack spacing={1} sx={{ mt: 0.5 }}>
+                    {[InspectionType.RIGGING, InspectionType.LIGHTING, InspectionType.FIRE].map((type) => {
+                      const summary = show.inspection_summary?.[type.toLowerCase() as keyof typeof show.inspection_summary]
+                      const status = summary?.status
+                      const statusLabel = status ? InspectionStatusLabels[status as InspectionStatus] : '待检查'
+                      const color = status === InspectionStatus.PASS
+                        ? 'success'
+                        : status === InspectionStatus.FAIL
+                        ? 'error'
+                        : 'default'
+                      return (
+                        <Box key={type}>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip
+                              label={InspectionTypeLabels[type]}
+                              size="small"
+                              color={color as any}
+                              variant={status === InspectionStatus.PASS ? 'outlined' : 'filled'}
+                            />
+                            <Typography variant="body2" color="text.secondary">{statusLabel}</Typography>
+                          </Stack>
+                          {summary?.remark && (
+                            <Typography variant="caption" color="text.secondary" sx={{ ml: 1, mt: 0.5, display: 'block' }}>
+                              备注：{summary.remark}
+                            </Typography>
+                          )}
+                          {summary?.issues_found && (
+                            <Typography variant="caption" color="error" sx={{ ml: 1, display: 'block' }}>
+                              问题：{summary.issues_found}
+                            </Typography>
+                          )}
+                          {summary?.inspector_name && (
+                            <Typography variant="caption" color="text.secondary" sx={{ ml: 1, display: 'block' }}>
+                              检查人：{summary.inspector_name}
+                            </Typography>
+                          )}
+                        </Box>
+                      )
+                    })}
+                  </Stack>
+                </Box>
                 {show.description && (
                   <>
                     <Divider />
